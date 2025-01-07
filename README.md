@@ -12,4 +12,4 @@ This repo includes the code and demos of paper "Foundation Model-Aided Channel-A
 - Advantages: These two demos simply demonstrate the practical feasibility of the video semantic communication paradigm. The system architecture is flexible and easy to deploy algorithms. It allows for near-arbitrary air interface testing of physical layer and upper-layer AI communication algorithms.
 - Disadvantages: The system's continuous video playback has an FPS of only 3-4. After troubleshooting and identifying the issue, it was found that the runtime of the convolution neural network is unstable. Sometimes it takes a few milliseconds(FPS is in the tens), while at other times it takes several hundred milliseconds(FPS in the single digits, even less than 1). As shown below(in seconds). Even when directly deployed on a 4090 server, this issue persists. This issue is beyond the scope of this study, but attempts will be made to address it in subsequent studies.
 
-![](https://s21.ax1x.com/2025/01/07/pE9HB34.png)
+<img src="https://s21.ax1x.com/2025/01/07/pE9HB34.png" style="zoom:50%;" />

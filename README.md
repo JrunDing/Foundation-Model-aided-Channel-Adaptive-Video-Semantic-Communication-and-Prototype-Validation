@@ -1,6 +1,6 @@
 # Introduction
 
-This repo includes the code and demos of paper "Foundation Model-Aided Channel-Adaptive Video Semantic Communication and Prototype Validation". The code will be available upon the acceptance of paper.
+This repo includes the code and demos of paper "Foundation Model-Aided Channel-Adaptive Video Semantic Communication and Prototype Validation". 
 
 # Demo introduction
 

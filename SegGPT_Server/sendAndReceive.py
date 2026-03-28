@@ -1,4 +1,6 @@
-
+"""
+@Brief: Send file to a remote server via SSH, FTP, then processing, and finally receive the processed file.
+"""
 import paramiko
 import time
 import os
@@ -57,6 +59,7 @@ def runCommand(chanT, command, endSymbol):
 
 
 if __name__ == "__main__":
+    # Example
     local_file_name = "***.avi"  
     local_file_path = "./"+local_file_name  
     remote_src_file_path = "***"+local_file_name  

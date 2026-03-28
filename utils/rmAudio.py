@@ -1,8 +1,13 @@
-
+"""
+@Brief: Remove audio using ffmpeg
+"""
 import os
 
 
 def rmAudio():
+    """
+    @Brief: Remove audio using ffmpeg
+    """
     parentDirectory = os.listdir("../data/UCF101/UCF-101-VAL/")
     videoPath = []  
     for k in parentDirectory: videoPath.append(os.listdir(f"UCF101/UCF101-VAL/{k}"))
@@ -17,4 +22,5 @@ def rmAudio():
 
 
 if __name__ == "__main__":
+    # Example
     rmAudio()

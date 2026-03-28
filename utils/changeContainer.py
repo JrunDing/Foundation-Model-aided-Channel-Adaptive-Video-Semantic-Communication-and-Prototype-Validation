@@ -6,6 +6,9 @@ import os
 
 
 def mp4_2_avi():
+    """
+    @Brief: .mp4 to .avi
+    """
     parentDirectory = os.listdir("../data/UCF101/DEBUG/")
     videoPath = []  
     for k in parentDirectory: videoPath.append(os.listdir(f"../data/UCF101/DEBUG/{k}"))
@@ -21,6 +24,9 @@ def mp4_2_avi():
 
 
 def avi_2_mp4():
+    """
+    @Brief: .avi to .mp4
+    """
     parentDirectory = os.listdir("../data/UCF101/DEBUG/")
     videoPath = []  
     for k in parentDirectory: videoPath.append(os.listdir(f"../data/UCF101/DEBUG/{k}"))
@@ -34,5 +40,5 @@ def avi_2_mp4():
 
 
 if __name__ == "__main__":
-
+    # Example
     avi_2_mp4()

@@ -1,4 +1,6 @@
-
+"""
+@Brief: Simulate a terminal connection to Linux via SSH
+"""
 import paramiko
 import time
 
@@ -30,6 +32,7 @@ def runCommand(chanT, command, endSymbol):
 
 
 if __name__ == "__main__":
+    # Example
     ssh = paramiko.SSHClient()
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
     ssh.connect(hostname, port, username, password)

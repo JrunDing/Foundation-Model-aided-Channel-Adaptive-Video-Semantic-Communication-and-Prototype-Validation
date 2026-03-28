@@ -12,13 +12,22 @@ device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 
 class Metrics(object):
+    """
+    :brief: Class for calculating metrics
+    """
     def __init__(self):
         self.lpipsLossAlex = lpips.LPIPS(net='alex').to(device)
         self.transform = transforms.Compose([transforms.ToTensor(),
                                              transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])  
 
     def cal_psnr(self, srcVideo, dstVideo, srcFrameNum):
-
+        """
+        :brief: Calculate PSNR between two videos.
+        :param srcVideo: cv.VideoCapture(src_path)
+        :param dstVideo: cv.VideoCapture(dst_path)
+        :param srcFrameNum: The frame number of source video. The frame number of decoded viode may be destroied, so the function needs this param.
+        :return: PSNR
+        """
         psnrNpList = np.array([])
         if srcVideo.isOpened() and dstVideo.isOpened():
             for frame in range(srcFrameNum):
@@ -27,7 +36,7 @@ class Metrics(object):
                 if not retDst: break  
                 psnrTmp = compare_psnr(imgSrc, imgDst, data_range=255)
                 if psnrTmp == "shapeNotEqual":
-                    psnrNpList = np.concatenate((psnrNpList, np.array([0])))
+                    psnrNpList = np.concatenate((psnrNpList, np.array([0]))) # unequal shape
                 else:
                     psnrNpList = np.concatenate((psnrNpList, np.array([psnrTmp])))
             PSNR = np.array([np.mean(psnrNpList)])
@@ -39,6 +48,9 @@ class Metrics(object):
             return np.array([0])
 
     def cal_ssim(self, srcVideo, dstVideo, srcFrameNum):
+        """
+        :brief: Calculate SSIM between two videos.
+        """
         ssimNpList = np.array([])
         if srcVideo.isOpened() and dstVideo.isOpened():
             for frame in range(srcFrameNum):
@@ -59,6 +71,9 @@ class Metrics(object):
             return np.array([0])
 
     def cal_lpips(self, srcVideo, dstVideo, srcFrameNum):
+        """
+        :brief: Calculate LPIPS between two videos.
+        """
         lpipsNpList = np.array([])
         if srcVideo.isOpened() and dstVideo.isOpened():
             for frame in range(srcFrameNum):
@@ -77,6 +92,13 @@ class Metrics(object):
             return np.array([1])
 
     def cal_object_mse(self, video_, srcFrameNum, refVideo):
+        """
+        :brief: Calculate MSE between decoded ROI videos and source ROI videos.
+        :param video_: Decoded ROI video
+        :param srcFrameNum: The frame number of source ROI video.
+        :param refVideo: Source ROI video
+        :return: MSE
+        """
         obMSEList = np.array([])
         if video_.isOpened() and refVideo.isOpened():
             for frame in range(srcFrameNum):
@@ -88,15 +110,15 @@ class Metrics(object):
                     continue
                 if not retRef: break  
 
-                maskRef = imgRef.copy() 
-                maskRef[np.sum(maskRef, axis=2) <= 10] = np.array([0, 0, 0]) 
+                maskRef = imgRef.copy()  # masking
+                maskRef[np.sum(maskRef, axis=2) <= 10] = np.array([0, 0, 0])  # decide black if the sum of three channels < 10 (for filtering)
                 maskRef[np.sum(maskRef, axis=2) > 10] = np.array([1, 1, 1])
 
                 imgVid = imgVid*maskRef
                 imgRef = imgRef*maskRef
 
                 imgRefTmp = np.sum(imgRef, axis=2) 
-                num = 320*240*3 - np.sum(imgRefTmp == 0)*3  
+                num = 320*240*3 - np.sum(imgRefTmp == 0)*3  # fixed resolution
                 mseTmp = np.sum((imgRef - imgVid) ** 2) / num 
 
                 obMSEList = np.concatenate((obMSEList, np.array([mseTmp])))
@@ -109,13 +131,20 @@ class Metrics(object):
             return np.array([65025])
 
     def cal_object_mse_woSegGPT(self, video_, srcFrameNum, refVideo):
+        """
+        :brief: Calculate MSE between decoded videos and source ROI videos.
+        :param video_: Decoded video
+        :param srcFrameNum: The frame number of source ROI video.
+        :param refVideo: Source ROI video
+        :return: MSE
+        """
         obMSEList = np.array([])
         if video_.isOpened() and refVideo.isOpened():
             for frame in range(srcFrameNum):
                 retVid, imgVid = video_.read()  
                 if imgVid is None:
                     continue
-                retRef, imgRef = refVideo.read() 
+                retRef, imgRef = refVideo.read()  # groundtruth
                 if imgRef is None:
                     continue
                 if not retRef: break  
@@ -143,6 +172,7 @@ class Metrics(object):
 
 if __name__ == "__main__":
 
+    # Example
     metrics = Metrics()
     srcCapture = cv.VideoCapture('ob.avi')
     dstCapture = cv.VideoCapture('merge.avi')

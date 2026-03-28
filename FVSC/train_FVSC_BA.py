@@ -1,0 +1,94 @@
+"""
+@Brief: Train FVSC model   RONI
+"""
+
+import torch
+import torch.nn as nn
+import argparse
+import torchvision
+import random
+from model_FVSC_BA import *
+from dataset_FVSC import *
+from SSIM import *
+
+device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+
+
+def main(args):
+
+    ssimLoss = SSIM().to(device)
+    mseLoss = nn.MSELoss(reduction='mean').to(device)
+
+    train_data = UCF101(path="../data/UCF101/***/")
+    valid_data = UCF101(path="../data/UCF101/***/")
+    train_data_loader = DataLoader(train_data, batch_size=args.batch, shuffle=True, num_workers=0, drop_last=True)
+    valid_data_loader = DataLoader(valid_data, batch_size=args.batch, shuffle=True, num_workers=0, drop_last=True)
+
+    frameCodec_BA_model = FrameCodec_BA().to(device)
+
+    adam_optimizer = torch.optim.Adam(frameCodec_BA_model.parameters(), lr=1e-4, betas=(0.9, 0.99))
+    scheduler = torch.optim.lr_scheduler.MultiStepLR(adam_optimizer, milestones=[40, 70], gamma=0.1)
+
+    epochs = args.epochs 
+    total_train_step = 0  
+
+    loss = 0  
+    record_loss = 0  
+    loss_per_epoch = 0  
+    loss_valid_per_epoch = 0  
+    epoch_valid_count = 0 
+    step_count = 0  
+
+    for epoch in range(epochs):
+        for train_data_ in train_data_loader:
+            ref = train_data_[0].to(device)
+            frame = train_data_[1].to(device)
+
+            frameCodec_BA_model.train()
+            recovered_frame = frameCodec_BA_model(ref, frame) 
+
+            loss = frameCodec_BA_model.loss_fn(recovered_frame, frame)  
+            loss_per_epoch += loss.item()  
+            step_count += 1 
+            adam_optimizer.zero_grad() 
+            loss.backward()  
+            adam_optimizer.step() 
+
+            total_train_step += 1
+            if total_train_step % 100 == 0: 
+                frameCodec_BA_model.eval()
+                total_valid_loss = 0
+                with torch.no_grad(): 
+                    valid_count = 0
+                    for valid_data_ in valid_data_loader:
+                        if valid_count < 5:
+                            ref_valid = valid_data_[0].to(device)
+                            frame_valid = valid_data_[1].to(device)
+                            recovered_frame_valid = frameCodec_BA_model(ref_valid, frame_valid)  
+
+                            valid_loss = frameCodec_BA_model.loss_fn(recovered_frame_valid, frame_valid)
+                            total_valid_loss += valid_loss.item()
+                            valid_count += 1
+                        else:
+                            break
+                loss_valid_per_epoch += total_valid_loss / 5 
+                epoch_valid_count += 1  
+
+        scheduler.step() 
+        total_train_step = 0
+
+    torch.save(frameCodec_BA_model.videocompressor.state_dict(),
+               "../checkpoints/C_epoch{}_loss{:.2f}.pth".format(epoch + 1, loss_per_epoch/step_count))
+    torch.save(frameCodec_BA_model.videodecompressor.state_dict(),
+               "../checkpoints/DC_epoch{}_loss{:.2f}.pth".format(epoch + 1, loss_per_epoch/step_count))
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--batch', default=8, type=int)
+    parser.add_argument('--epochs', default=100, type=int)
+
+    args_ = parser.parse_args()
+
+    main(args_)
+

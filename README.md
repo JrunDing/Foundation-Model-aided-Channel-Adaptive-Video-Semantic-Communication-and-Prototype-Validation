@@ -14,6 +14,8 @@
 
 ​		[SegGPT](https://github.com/baaivision/Painter) is utilized in our work to implement video segmentation. You may also choose to use other more advanced models.
 
+​		[UCF-101](https://www.crcv.ucf.edu/data/UCF101.php) and [MCL_JCV](https://mcl.usc.edu/mcl-jcv-dataset/) datasets.
+
 ```
 data: used to store data
     ---Make_FVSC_Dataset.py: a script used to build ROI/RONI data
@@ -49,4 +51,8 @@ requirements.txt: software dependencies
 - Advantages: These two demos simply demonstrate the practical feasibility of the video semantic communication paradigm. The system architecture is flexible and easy to deploy algorithms. It allows for near-arbitrary air interface testing of physical layer and upper-layer AI communication algorithms.
 - Disadvantages: The system's continuous video playback has an FPS of only 3-4. After troubleshooting and identifying the issue, it was found that the runtime of the convolution neural network is unstable. Sometimes it takes a few milliseconds(FPS is in the tens), while at other times it takes several hundred milliseconds(FPS in the single digits, even less than 1). As shown below(in seconds). Even when directly deployed on a 4090 server, this issue persists. This issue is beyond the scope of this study, but attempts will be made to address it in subsequent studies.
 
-<img src="https://s21.ax1x.com/2025/01/07/pE9HhCD.png" style="zoom:67%;" />
+<img src="https://s21.ax1x.com/2025/01/07/pE9HhCD.png" style="zoom:50%;" />
+
+​		A transmission result (source, H.265-LDPC, VSC). The original video was captured by a USB camera at a resolution of 640×480 and 30 FPS:
+
+<center class="half">    <img src="E:\School\Post_Undergraduate\Research\FVSC\github\OTA\src.jpg" width="250"/> <img src="E:\School\Post_Undergraduate\Research\FVSC\github\OTA\h265_ldpc.png" width="250"/> <img src="E:\School\Post_Undergraduate\Research\FVSC\github\OTA\vsc.jpg" width="250"/></center>

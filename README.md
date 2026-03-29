@@ -55,4 +55,4 @@ requirements.txt: software dependencies
 
 ​		A transmission result (source, H.265-LDPC, VSC). The original video was captured by a USB camera at a resolution of 640×480 and 30 FPS:
 
-<center class="half">    <img src="E:\School\Post_Undergraduate\Research\FVSC\github\OTA\src.jpg" width="250"/> <img src="E:\School\Post_Undergraduate\Research\FVSC\github\OTA\h265_ldpc.png" width="250"/> <img src="E:\School\Post_Undergraduate\Research\FVSC\github\OTA\vsc.jpg" width="250"/></center>
+<center class="half">    <img src="./OTA/src.jpg" width="250"/> <img src="./OTA/h265_ldpc.png" width="250"/> <img src="./OTA/vsc.jpg" width="250"/></center>
